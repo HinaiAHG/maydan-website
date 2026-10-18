@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { hasRate, rate } from "../../lib/data";
+import { SportIcon } from "../SportIcon";
 import { useLang } from "../../lib/i18n";
 import type { Pitch } from "../../lib/types";
 
@@ -32,23 +33,6 @@ const AMENITY_LABELS: Record<string, { en: string; ar: string }> = {
 /** The app stores accent colors as a number (0xRRGGBB). */
 function accentColor(hex: number): string {
   return `#${(hex & 0xffffff).toString(16).padStart(6, "0")}`;
-}
-
-/**
- * Ball glyphs for the sport pill. Two balls of the same silhouette, told apart
- * only by their markings, which is exactly what a badge-sized icon should do.
- */
-function SportIcon({ padel }: { padel: boolean }) {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <circle cx="12" cy="12" r="9" />
-      {padel ? (
-        <path d="M5.6 5.6c2.6 2 2.6 10.8 0 12.8M18.4 5.6c-2.6 2-2.6 10.8 0 12.8" strokeLinecap="round" />
-      ) : (
-        <path d="M12 7.5l3.4 2.5-1.3 4h-4.2l-1.3-4zM12 3v4.5M3.3 10.3l5.3-.3M20.7 10.3l-5.3-.3M6.5 19.3l3.4-5.3M17.5 19.3l-3.4-5.3" strokeLinejoin="round" />
-      )}
-    </svg>
-  );
 }
 
 /** Small translucent pill used on the banner (surface, size, indoor). */
@@ -110,7 +94,7 @@ export function PitchCard({
             one you are looking at is the first thing to answer. */}
         <div className="absolute top-2.5 start-3">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
-            <SportIcon padel={padel} />
+            <SportIcon sport={pitch.sport} size={12} />
             {padel ? (ar ? "بادل" : "Padel") : ar ? "كرة القدم" : "Football"}
           </span>
         </div>
