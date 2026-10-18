@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { httpsCallable } from "firebase/functions";
 import { firebaseReady, fns } from "../lib/firebase";
-import { omr } from "../lib/data";
+import { rate } from "../lib/data";
 import type { Pitch } from "../lib/types";
 import { useLang } from "../lib/i18n";
 import { useAuth } from "../lib/auth";
@@ -14,6 +14,7 @@ import { SlotGrid } from "../components/pitch/SlotGrid";
 import { CourtList } from "../components/pitch/CourtList";
 import { BookingSuccess } from "../components/pitch/BookingSuccess";
 import {
+  courtNoun,
   courtSizeNumber,
   dayKeyOf,
   dayShortLabel,
@@ -277,7 +278,7 @@ export default function PitchPage() {
                 <p className="text-sm text-muted">
                   {ar
                     ? "هذا الملعب لا يدعم الحجز داخل التطبيق بعد. اتصل بالمالك للحجز."
-                    : "This pitch is not on in-app booking yet. Call the owner to reserve."}
+                    : `This ${courtNoun(pitch.sport, false)} is not on in-app booking yet. Call the owner to reserve.`}
                 </p>
               </section>
             )}
@@ -290,7 +291,7 @@ export default function PitchPage() {
             <div className="sticky bottom-4">
               <div className="flex items-center gap-3 rounded-2xl border border-border bg-white/85 p-4 shadow-[0_4px_10px_rgba(13,27,50,0.06),0_18px_44px_rgba(37,99,235,0.18)] backdrop-blur-xl">
                 <div className="min-w-0 flex-1">
-                  <div className="text-lg font-black">{omr(price)}</div>
+                  <div className="text-lg font-black">{rate(price, ar)}</div>
                   <div
                     className={`truncate text-xs font-semibold ${
                       slot ? "text-electric-bright" : "text-muted"

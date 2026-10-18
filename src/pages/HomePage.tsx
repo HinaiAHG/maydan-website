@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../lib/i18n";
+import { AppStoreBadge, APP_STORE_URL } from "../components/AppStoreBadge";
 
 /*
  * Home: a parallax landing page explaining what Maydan does.
@@ -18,23 +19,26 @@ const T = {
   heroTitle1: { en: "Where sport meets", ar: "حيث تلتقي الرياضة" },
   heroTitle2: { en: "simplicity", ar: "بالبساطة" },
   heroSub: {
-    en: "Discover and book football pitches across Muscat in seconds. Maydan brings players, teams and pitch owners together in one place.",
-    ar: "اكتشف واحجز ملاعب كرة القدم في مسقط خلال ثوانٍ. ميدان يجمع اللاعبين والفرق وأصحاب الملاعب في مكان واحد.",
+    en: "Discover and book football pitches and padel courts across Muscat in seconds. Maydan brings players, teams and venue owners together in one place.",
+    ar: "اكتشف واحجز ملاعب كرة القدم والبادل في مسقط خلال ثوانٍ. ميدان يجمع اللاعبين والفرق وأصحاب الملاعب في مكان واحد.",
   },
-  ctaDiscover: { en: "Explore pitches", ar: "استكشف الملاعب" },
+  ctaDiscover: { en: "Explore venues", ar: "استكشف الملاعب" },
   ctaAI: { en: "Ask Maydan AI", ar: "اسأل ميدان AI" },
-  soon: { en: "The iOS app is coming soon to iPhone", ar: "تطبيق iOS قادم قريباً إلى الآيفون" },
+  getApp: { en: "Or take it with you", ar: "أو خذه معك" },
+  onIphone: { en: "Free on iPhone. Football and padel, in English and Arabic.", ar: "مجاناً على الآيفون. كرة قدم وبادل، بالعربية والإنجليزية." },
+
+  download: { en: "Get the app", ar: "حمّل التطبيق" },
 
   s1Kicker: { en: "Discover", ar: "اكتشف" },
-  s1Title: { en: "Every pitch in Muscat, on one map", ar: "كل ملاعب مسقط على خريطة واحدة" },
+  s1Title: { en: "Every pitch and court in Muscat, on one map", ar: "كل ملاعب مسقط على خريطة واحدة" },
   s1Body: {
-    en: "Browse live pitches near you, compare prices in OMR, and filter by size, surface, indoor or outdoor. Real venues, real availability, straight from the same database as the app.",
-    ar: "تصفح الملاعب القريبة منك، قارن الأسعار بالريال العماني، وصفِّ حسب الحجم ونوع الأرضية وداخلي أو خارجي. ملاعب حقيقية وتوفر حقيقي من نفس قاعدة بيانات التطبيق.",
+    en: "Browse football pitches and padel courts near you, compare prices in OMR, and filter by sport, size, surface, indoor or outdoor. Real venues, real availability, straight from the same database as the app.",
+    ar: "تصفح ملاعب كرة القدم والبادل القريبة منك، قارن الأسعار بالريال العماني، وصفِّ حسب الرياضة والحجم ونوع الأرضية وداخلي أو خارجي. ملاعب حقيقية وتوفر حقيقي من نفس قاعدة بيانات التطبيق.",
   },
   s2Kicker: { en: "Book", ar: "احجز" },
   s2Title: { en: "Pick a time. Confirm in seconds.", ar: "اختر وقتاً وأكد خلال ثوانٍ" },
   s2Body: {
-    en: "See open time slots for the next seven days, choose your court, and confirm instantly. Your booking shows up live for the pitch owner the moment you tap.",
+    en: "See open time slots for the next seven days, choose your pitch or court, and confirm instantly. Your booking shows up live for the owner the moment you tap.",
     ar: "شاهد الأوقات المتاحة للأيام السبعة القادمة، اختر ملعبك، وأكد فوراً. يظهر حجزك مباشرة لصاحب الملعب لحظة التأكيد.",
   },
   s3Kicker: { en: "Play together", ar: "العبوا معاً" },
@@ -46,20 +50,20 @@ const T = {
   s4Kicker: { en: "For owners", ar: "لأصحاب الملاعب" },
   s4Title: { en: "Run your venue from anywhere", ar: "أدر ملعبك من أي مكان" },
   s4Body: {
-    en: "Live bookings, revenue charts, prices and court availability, all in an owner dashboard that syncs with the Maydan app in real time.",
-    ar: "حجوزات مباشرة ورسوم بيانية للإيرادات وأسعار وتوفر الملاعب، كلها في لوحة تحكم تتزامن مع تطبيق ميدان لحظياً.",
+    en: "Live bookings, revenue charts, prices and availability across football and padel, all in an owner dashboard that syncs with the Maydan app in real time.",
+    ar: "حجوزات مباشرة ورسوم بيانية للإيرادات وأسعار وتوفر الملاعب لكرة القدم والبادل، كلها في لوحة تحكم تتزامن مع تطبيق ميدان لحظياً.",
   },
   s5Kicker: { en: "Maydan AI", ar: "ميدان AI" },
   s5Title: { en: "An assistant that knows the pitches", ar: "مساعد يعرف الملاعب" },
   s5Body: {
-    en: "Ask in Arabic or English. Maydan AI reads live pitch data, so it recommends real venues, real prices and real times, never guesses.",
-    ar: "اسأل بالعربية أو الإنجليزية. يقرأ ميدان AI بيانات الملاعب المباشرة، فيرشّح ملاعب وأسعاراً وأوقاتاً حقيقية دون تخمين.",
+    en: "Ask in Arabic or English. Maydan AI reads live venue data for both sports, so it recommends real pitches and courts, real prices and real times, never guesses.",
+    ar: "اسأل بالعربية أو الإنجليزية. يقرأ ميدان AI بيانات الملاعب المباشرة للرياضتين، فيرشّح ملاعب وأسعاراً وأوقاتاً حقيقية دون تخمين.",
   },
 
   bottomTitle: { en: "Ready to play?", ar: "جاهز للعب؟" },
   bottomBody: {
-    en: "Find your pitch and get on the grass. It takes less than a minute.",
-    ar: "اعثر على ملعبك وانزل إلى أرض الملعب. يستغرق الأمر أقل من دقيقة.",
+    en: "Find a pitch or a court and get playing. It takes less than a minute.",
+    ar: "اعثر على ملعب كرة قدم أو بادل وابدأ اللعب. يستغرق الأمر أقل من دقيقة.",
   },
   rights: { en: "Maydan. All rights reserved.", ar: "ميدان. جميع الحقوق محفوظة." },
   privacy: { en: "Privacy", ar: "الخصوصية" },
@@ -199,7 +203,13 @@ export default function HomePage() {
                 {ar ? T.ctaAI.ar : T.ctaAI.en}
               </Link>
             </div>
-            <p className="mt-5 text-[13.5px] font-semibold text-muted">{ar ? T.soon.ar : T.soon.en}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <span className="text-[13.5px] font-bold uppercase tracking-[0.12em] text-muted">
+                {ar ? T.getApp.ar : T.getApp.en}
+              </span>
+              <AppStoreBadge />
+            </div>
+            <p className="mt-3 text-[13.5px] text-muted">{ar ? T.onIphone.ar : T.onIphone.en}</p>
           </div>
         </div>
       </section>
@@ -245,9 +255,12 @@ export default function HomePage() {
             <img src="/assets/img/logo_white.svg" alt="" aria-hidden className="pointer-events-none absolute -end-10 -top-10 w-64 opacity-10" />
             <h2 className="text-[32px] font-black tracking-tight text-white sm:text-[40px]">{ar ? T.bottomTitle.ar : T.bottomTitle.en}</h2>
             <p className="mx-auto mt-3 max-w-md text-[16px] text-white/85">{ar ? T.bottomBody.ar : T.bottomBody.en}</p>
-            <Link to="/discover" className="btn mt-8 !bg-white !px-8 !py-3.5 !text-[16px] !text-electric hover:!bg-white/90">
-              {ar ? T.ctaDiscover.ar : T.ctaDiscover.en}
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link to="/discover" className="btn !bg-white !px-8 !py-3.5 !text-[16px] !text-electric hover:!bg-white/90">
+                {ar ? T.ctaDiscover.ar : T.ctaDiscover.en}
+              </Link>
+              <AppStoreBadge tone="light" />
+            </div>
           </div>
         </div>
       </section>
@@ -263,6 +276,14 @@ export default function HomePage() {
             <Link to="/privacy" className="hover:text-electric">{ar ? T.privacy.ar : T.privacy.en}</Link>
             <Link to="/terms" className="hover:text-electric">{ar ? T.terms.ar : T.terms.en}</Link>
             <Link to="/support" className="hover:text-electric">{ar ? T.support.ar : T.support.en}</Link>
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-electric"
+            >
+              {ar ? T.download.ar : T.download.en}
+            </a>
           </nav>
         </div>
       </footer>

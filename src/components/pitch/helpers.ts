@@ -1,5 +1,5 @@
 import { fetchPitches } from "../../lib/data";
-import type { Court, Pitch, Slot } from "../../lib/types";
+import type { Court, Pitch, Slot, Sport } from "../../lib/types";
 
 /** All pitch times are Muscat local (UTC+4, no DST). */
 export const MUSCAT_TZ = "Asia/Muscat";
@@ -59,16 +59,33 @@ export function surfaceLabel(raw: string, ar: boolean): string {
 }
 
 /** PitchSize raw values (as stored by the app) to labels and per-side counts. */
-const SIZES: Record<string, { label: string; perSide: number }> = {
+const SIZES: Record<string, { label: string; ar?: string; perSide: number }> = {
   fiveASide: { label: "5v5", perSide: 5 },
   sixASide: { label: "6v6", perSide: 6 },
   sevenASide: { label: "7v7", perSide: 7 },
   elevenASide: { label: "11v11", perSide: 11 },
+  padelSingles: { label: "Singles", ar: "فردي", perSide: 1 },
+  padelDoubles: { label: "Doubles", ar: "زوجي", perSide: 2 },
 };
 
-export function sizeLabel(raw?: string): string {
+export function sizeLabel(raw?: string, ar = false): string {
   if (!raw) return "";
-  return SIZES[raw]?.label ?? raw;
+  const hit = SIZES[raw];
+  if (!hit) return raw;
+  return ar && hit.ar ? hit.ar : hit.label;
+}
+
+/** What one venue of this sport is called, for copy that has to name it. */
+export function courtNoun(sport: Sport, ar: boolean, plural = false): string {
+  if (sport === "padel") {
+    return ar ? (plural ? "ملاعب" : "ملعب") : plural ? "courts" : "court";
+  }
+  return ar ? (plural ? "ملاعب" : "ملعب") : plural ? "pitches" : "pitch";
+}
+
+export function sportLabel(sport: Sport, ar: boolean): string {
+  if (sport === "padel") return ar ? "بادل" : "Padel";
+  return ar ? "كرة القدم" : "Football";
 }
 
 /** Players per side for a court, e.g. 5 for a 5v5 pitch (default 5). */
@@ -80,18 +97,24 @@ export function courtSizeNumber(court: Court): number {
 }
 
 /**
- * Bookable pitches to display: the venue's own list, or a derived 5/6/7-a-side
- * set matching the app's `displayCourts` (stable ids, +2 OMR per size step).
+ * Bookable courts to display: the venue's own list, or a derived set matching
+ * the app's `displayCourts` (stable ids, +2 OMR per size step).
+ *
+ * The derived set is sport-specific. A padel venue offered as 5, 6 and 7-a-side
+ * would be nonsense, so padel falls back to the two formats it actually has,
+ * priced the same because a padel court is a padel court.
  */
 export function displayCourts(pitch: Pitch, ar: boolean): Court[] {
   if (pitch.courts.length > 0) return pitch.courts;
   const base = pitch.isIndoor ? (ar ? "مغلق" : "Indoor") : ar ? "مكشوف" : "Outdoor";
-  const sizes = ["fiveASide", "sixASide", "sevenASide"];
+  const padel = pitch.sport === "padel";
+  const sizes = padel ? ["padelDoubles", "padelSingles"] : ["fiveASide", "sixASide", "sevenASide"];
   return sizes.map((size, index) => ({
     id: `${pitch.id}-c${index + 1}`,
-    name: sizeLabel(size),
-    attributes: [base, surfaceLabel(pitch.surface, ar), sizeLabel(size)],
-    pricePerHour: pitch.pricePerHour + index * 2,
+    name: sizeLabel(size, ar),
+    attributes: [base, ...(padel ? [] : [surfaceLabel(pitch.surface, ar)]), sizeLabel(size, ar)]
+      .filter(Boolean),
+    pricePerHour: pitch.pricePerHour + (padel ? 0 : index * 2),
     size,
     isAvailable: true,
   }));

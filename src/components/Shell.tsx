@@ -1,6 +1,7 @@
 import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
 import { useLang } from "../lib/i18n";
 import { useAuth } from "../lib/auth";
+import { APP_STORE_URL } from "./AppStoreBadge";
 
 const ICONS = {
   // simple line icons (24x24 paths)
@@ -72,6 +73,20 @@ export function Shell() {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
+            {/* The landing page has the full badge; every other page gets this
+                so the app is never more than one click away. Hidden on narrow
+                screens, where the header has no room to spare. */}
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="navlink hidden items-center gap-1.5 rounded-full border border-white/35 px-3 py-1.5 text-[13px] font-bold text-white hover:bg-white/15 xl:inline-flex"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M16.37 12.78c.02-2.3 1.88-3.4 1.96-3.45-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.79-.41 6.92 1.15 9.18.76 1.11 1.67 2.35 2.86 2.3 1.15-.04 1.58-.74 2.97-.74 1.39 0 1.78.74 2.99.72 1.24-.02 2.02-1.12 2.78-2.24.88-1.28 1.24-2.52 1.26-2.59-.03-.01-2.41-.93-2.44-3.69zM14.1 5.95c.63-.77 1.06-1.83.94-2.9-.91.04-2.01.61-2.67 1.37-.59.67-1.1 1.76-.96 2.79 1.01.08 2.05-.52 2.69-1.26z" />
+              </svg>
+              {ar ? "حمّل التطبيق" : "Get the app"}
+            </a>
             <button
               onClick={toggle}
               className="navlink rounded-full border border-white/35 px-3 py-1.5 text-[13px] font-bold text-white hover:bg-white/15"

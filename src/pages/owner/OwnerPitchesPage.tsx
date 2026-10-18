@@ -134,7 +134,11 @@ export default function OwnerPitchesPage() {
                 <h2 className="truncate text-base font-bold">{pitch.name}</h2>
                 <p className="mt-0.5 truncate text-[13px] text-muted">
                   {[pitch.area, pitch.city].filter(Boolean).join(", ")} ·{" "}
-                  {omr(pitch.pricePerHour)} {ar ? "للساعة" : "per hour"}
+                  {pitch.pricePerHour > 0
+                    ? `${omr(pitch.pricePerHour)} ${ar ? "للساعة" : "per hour"}`
+                    : ar
+                      ? "لم يُحدَّد السعر"
+                      : "No price set"}
                 </p>
               </div>
               <span className="shrink-0 rounded-full bg-electric/10 px-2.5 py-1 text-[11px] font-bold text-electric">

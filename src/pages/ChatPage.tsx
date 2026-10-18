@@ -24,7 +24,7 @@ const COPY = {
     title: "Maydan AI",
     beta: "Beta v1.0",
     newChat: "New chat",
-    greeting: "Hey! I'm your Maydan assistant. Looking for a pitch, a time, or help with a booking?",
+    greeting: "Hey! I'm your Maydan assistant. Looking for a football pitch, a padel court, a time, or help with a booking?",
     placeholder: "Ask Maydan anything",
     send: "Send message",
     empty: "Sorry, I didn't catch that. Try again?",
@@ -36,7 +36,7 @@ const COPY = {
     title: "ميدان AI",
     beta: "تجريبي 1.0",
     newChat: "محادثة جديدة",
-    greeting: "مرحباً! أنا مساعد ميدان. تبحث عن ملعب، أو وقت، أو مساعدة في حجز؟",
+    greeting: "مرحباً! أنا مساعد ميدان. تبحث عن ملعب كرة قدم، أو ملعب بادل، أو وقت، أو مساعدة في حجز؟",
     placeholder: "اسأل ميدان أي شيء",
     send: "إرسال",
     empty: "عذراً، لم أفهم ذلك. حاول مرة أخرى؟",
@@ -60,14 +60,21 @@ function buildPitchContext(pitches: Pitch[]): string {
   const dayEnd = new Date();
   dayEnd.setHours(24, 0, 0, 0);
 
-  const lines = ["LIVE PITCH DATA (closest first). Prices in OMR."];
+  const lines = ["LIVE VENUE DATA (closest first). Prices in OMR. Each line starts with the sport."];
   const sorted = [...pitches].sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 20);
   for (const p of sorted) {
+    const padel = p.sport === "padel";
     const parts = [
+      // The sport leads the line so the model can filter on it without having
+      // to infer one from a venue's name.
+      `[${padel ? "padel" : "football"}]`,
       p.area ? `${p.name}, ${p.area}` : p.name,
       `${p.distanceKm.toFixed(1)} km`,
       `${Math.round(p.pricePerHour)} OMR/hr`,
-      `${p.size}, ${p.surface}${p.isIndoor ? ", indoor" : ""}`,
+      // A padel court has no meaningful surface to report.
+      padel
+        ? `${p.size}${p.isIndoor ? ", indoor" : ""}`
+        : `${p.size}, ${p.surface}${p.isIndoor ? ", indoor" : ""}`,
     ];
     // Only plus/pro tiers surface slots; pro alone is bookable in-app.
     if (p.tier === "plus" || p.tier === "pro") {

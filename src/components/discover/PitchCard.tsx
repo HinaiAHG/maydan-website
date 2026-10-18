@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
-import { omr } from "../../lib/data";
+import { hasRate, rate } from "../../lib/data";
 import { useLang } from "../../lib/i18n";
 import type { Pitch } from "../../lib/types";
 
 /** Raw Firestore size values to the app's short labels. */
-const SIZE_LABELS: Record<string, string> = {
-  fiveASide: "5v5",
-  sixASide: "6v6",
-  sevenASide: "7v7",
-  elevenASide: "11v11",
+const SIZE_LABELS: Record<string, { en: string; ar: string }> = {
+  fiveASide: { en: "5v5", ar: "5v5" },
+  sixASide: { en: "6v6", ar: "6v6" },
+  sevenASide: { en: "7v7", ar: "7v7" },
+  elevenASide: { en: "11v11", ar: "11v11" },
+  padelSingles: { en: "Singles", ar: "فردي" },
+  padelDoubles: { en: "Doubles", ar: "زوجي" },
 };
 
 const SURFACE_LABELS: Record<string, { en: string; ar: string }> = {
@@ -30,6 +32,23 @@ const AMENITY_LABELS: Record<string, { en: string; ar: string }> = {
 /** The app stores accent colors as a number (0xRRGGBB). */
 function accentColor(hex: number): string {
   return `#${(hex & 0xffffff).toString(16).padStart(6, "0")}`;
+}
+
+/**
+ * Ball glyphs for the sport pill. Two balls of the same silhouette, told apart
+ * only by their markings, which is exactly what a badge-sized icon should do.
+ */
+function SportIcon({ padel }: { padel: boolean }) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      {padel ? (
+        <path d="M5.6 5.6c2.6 2 2.6 10.8 0 12.8M18.4 5.6c-2.6 2-2.6 10.8 0 12.8" strokeLinecap="round" />
+      ) : (
+        <path d="M12 7.5l3.4 2.5-1.3 4h-4.2l-1.3-4zM12 3v4.5M3.3 10.3l5.3-.3M20.7 10.3l-5.3-.3M6.5 19.3l3.4-5.3M17.5 19.3l-3.4-5.3" strokeLinejoin="round" />
+      )}
+    </svg>
+  );
 }
 
 /** Small translucent pill used on the banner (surface, size, indoor). */
@@ -54,7 +73,10 @@ export function PitchCard({
 }) {
   const { ar } = useLang();
   const pro = pitch.tier === "pro";
-  const surface = SURFACE_LABELS[pitch.surface];
+  const padel = pitch.sport === "padel";
+  // A padel court has no grass or turf to speak of, so the surface tag is
+  // dropped rather than left to show whatever happened to be imported.
+  const surface = padel ? undefined : SURFACE_LABELS[pitch.surface];
   const size = SIZE_LABELS[pitch.size];
   const amenities = pitch.amenities.map((a) => {
     const label = AMENITY_LABELS[a];
@@ -84,14 +106,24 @@ export function PitchCard({
           className="pointer-events-none absolute -top-3 -end-5 h-24 w-24 opacity-15"
         />
         <div className="absolute inset-0 bg-linear-to-b from-black/5 via-transparent to-black/55" />
+        {/* The sport names itself top-left: with two sports in one list, which
+            one you are looking at is the first thing to answer. */}
+        <div className="absolute top-2.5 start-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+            <SportIcon padel={padel} />
+            {padel ? (ar ? "بادل" : "Padel") : ar ? "كرة القدم" : "Football"}
+          </span>
+        </div>
         <div className="absolute bottom-2.5 start-3 flex items-center gap-1.5">
           {surface && <Tag>{ar ? surface.ar : surface.en}</Tag>}
-          {size && <Tag>{size}</Tag>}
+          {size && <Tag>{ar ? size.ar : size.en}</Tag>}
           {pitch.isIndoor && <Tag>{ar ? "مغلق" : "Indoor"}</Tag>}
         </div>
         <div className="absolute bottom-2.5 end-3 text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-          <span className="text-[15px] font-extrabold">{omr(pitch.pricePerHour)}</span>
-          <span className="ms-1 text-[11px] font-semibold opacity-90">{ar ? "/ ساعة" : "/ hr"}</span>
+          <span className="text-[15px] font-extrabold">{rate(pitch.pricePerHour, ar)}</span>
+          {hasRate(pitch.pricePerHour) && (
+            <span className="ms-1 text-[11px] font-semibold opacity-90">{ar ? "/ ساعة" : "/ hr"}</span>
+          )}
         </div>
       </div>
 

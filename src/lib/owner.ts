@@ -11,7 +11,7 @@ import {
 import { httpsCallable } from "firebase/functions";
 import { useEffect, useState } from "react";
 import { db, fns } from "./firebase";
-import type { Booking, Pitch } from "./types";
+import type { Booking, Pitch, Sport } from "./types";
 
 /** Booking statuses the owner can set (mirrors the app's BookingStatus). */
 export type OwnerBookingStatus = "confirmed" | "completed" | "cancelled";
@@ -30,9 +30,10 @@ function toMillis(v: unknown): number {
 }
 
 /** Tolerant pitch mapping (same shape as lib/data.ts fetchPitches). */
-function mapPitch(id: string, x: Record<string, unknown>): Pitch {
+function mapPitch(id: string, x: Record<string, unknown>, sport: Sport): Pitch {
   return {
     id: (x.id as string) ?? id,
+    sport,
     name: (x.name as string) ?? "",
     area: (x.area as string) ?? "",
     city: (x.city as string) ?? "",
@@ -102,12 +103,26 @@ function mapBooking(id: string, d: Record<string, unknown>): Booking | null {
   };
 }
 
-/** The signed-in owner's pitches (Firestore: pitches where ownerUid == uid). */
+/**
+ * Everything the signed-in owner owns, across both sports.
+ *
+ * Football pitches and padel courts are separate collections, so an owner who
+ * runs both would otherwise see only half their venues, and half their money.
+ */
 export async function fetchOwnedPitches(uid: string): Promise<Pitch[]> {
   const d = db();
   if (!d || !uid) return [];
-  const snap = await getDocs(query(collection(d, "pitches"), where("ownerUid", "==", uid)));
-  return snap.docs.map((doc) => mapPitch(doc.id, doc.data() as Record<string, unknown>));
+  const lists: { collection: string; sport: Sport }[] = [
+    { collection: "pitches", sport: "football" },
+    { collection: "padelVenues", sport: "padel" },
+  ];
+  const results = await Promise.allSettled(
+    lists.map(async ({ collection: name, sport }) => {
+      const snap = await getDocs(query(collection(d, name), where("ownerUid", "==", uid)));
+      return snap.docs.map((doc) => mapPitch(doc.id, doc.data() as Record<string, unknown>, sport));
+    })
+  );
+  return results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
 }
 
 /**

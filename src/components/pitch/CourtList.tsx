@@ -1,6 +1,6 @@
 import type { Court } from "../../lib/types";
 import { useLang } from "../../lib/i18n";
-import { omr } from "../../lib/data";
+import { rate } from "../../lib/data";
 
 /**
  * The venue's individual pitches. Unavailable ones render dimmed and struck
@@ -59,7 +59,7 @@ export function CourtList({
                 active ? "text-electric" : "text-ink"
               }`}
             >
-              {omr(c.pricePerHour)}
+              {rate(c.pricePerHour, ar)}
             </span>
           </button>
         );

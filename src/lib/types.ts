@@ -1,3 +1,13 @@
+/**
+ * Which sport a venue is for.
+ *
+ * Football and padel live in separate Firestore collections (`pitches` and
+ * `padelVenues`), because a football pitch and a padel court share almost
+ * nothing a player filters or sorts on. This field is what the merged list
+ * carries so nothing downstream has to remember where a venue came from.
+ */
+export type Sport = "football" | "padel";
+
 /** Mirrors the app's Pitch model (Firestore `pitches` collection). */
 export interface Court {
   id: string;
@@ -19,6 +29,7 @@ export interface Slot {
 
 export interface Pitch {
   id: string;
+  sport: Sport;
   name: string;
   area: string;
   city: string;

@@ -1,26 +1,43 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { firebaseReady, mapsReady } from "../lib/firebase";
-import { fetchPitches } from "../lib/data";
+import { fetchPitches, SHOW_VENUE_PRICES } from "../lib/data";
 import { useLang } from "../lib/i18n";
-import type { Pitch } from "../lib/types";
+import type { Pitch, Sport } from "../lib/types";
 import { SetupNotice } from "../components/SetupNotice";
 import { DiscoverMap } from "../components/discover/DiscoverMap";
 import { PitchCard } from "../components/discover/PitchCard";
 
-type FilterId = "all" | "indoor" | "outdoor" | "five" | "sixSeven";
+type SportId = "all" | Sport;
+type FilterId = "all" | "indoor" | "outdoor" | "five" | "sixSeven" | "singles" | "doubles";
 type SortId = "price" | "distance";
 
-const FILTERS: { id: FilterId; en: string; ar: string }[] = [
+const SPORTS: { id: SportId; en: string; ar: string }[] = [
+  { id: "all", en: "All sports", ar: "كل الرياضات" },
+  { id: "football", en: "Football", ar: "كرة القدم" },
+  { id: "padel", en: "Padel", ar: "بادل" },
+];
+
+/**
+ * Attribute filters, each tagged with the sport it means anything for.
+ *
+ * "5-a-side" on a padel court is noise, and so is "Doubles" on a football
+ * pitch, so a chip only appears once the sport it belongs to is in view.
+ */
+const FILTERS: { id: FilterId; en: string; ar: string; sport?: Sport }[] = [
   { id: "all", en: "All", ar: "الكل" },
   { id: "indoor", en: "Indoor", ar: "مغلق" },
   { id: "outdoor", en: "Outdoor", ar: "مفتوح" },
-  { id: "five", en: "5-a-side", ar: "خماسي" },
-  { id: "sixSeven", en: "6/7-a-side", ar: "سداسي وسباعي" },
+  { id: "five", en: "5-a-side", ar: "خماسي", sport: "football" },
+  { id: "sixSeven", en: "6/7-a-side", ar: "سداسي وسباعي", sport: "football" },
+  { id: "doubles", en: "Doubles", ar: "زوجي", sport: "padel" },
+  { id: "singles", en: "Singles", ar: "فردي", sport: "padel" },
 ];
 
+// Sorting by a price the listing will not show is a control that appears to do
+// nothing, so the price sort comes back with the prices.
 const SORTS: { id: SortId; en: string; ar: string }[] = [
-  { id: "price", en: "Price", ar: "السعر" },
+  ...(SHOW_VENUE_PRICES ? [{ id: "price" as const, en: "Price", ar: "السعر" }] : []),
   { id: "distance", en: "Nearest", ar: "الأقرب" },
 ];
 
@@ -41,6 +58,10 @@ function matchesFilter(p: Pitch, f: FilterId): boolean {
       return hasSize(p, ["fiveASide"]);
     case "sixSeven":
       return hasSize(p, ["sixASide", "sevenASide"]);
+    case "doubles":
+      return hasSize(p, ["padelDoubles"]);
+    case "singles":
+      return hasSize(p, ["padelSingles"]);
   }
 }
 
@@ -65,6 +86,7 @@ export default function DiscoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [query, setQuery] = useState("");
+  const [sport, setSport] = useState<SportId>("all");
   const [filter, setFilter] = useState<FilterId>("all");
   const [sort, setSort] = useState<SortId | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -95,16 +117,36 @@ export default function DiscoverPage() {
     };
   }, [reloadKey]);
 
+  // Chips for the sport in view. Switching sport drops a size filter that no
+  // longer applies, rather than silently matching nothing.
+  const chips = useMemo(
+    () => FILTERS.filter((f) => !f.sport || sport === "all" || f.sport === sport),
+    [sport]
+  );
+  useEffect(() => {
+    if (!chips.some((f) => f.id === filter)) setFilter("all");
+  }, [chips, filter]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = pitches.filter((p) => {
       const matchesQ = !q || [p.name, p.area, p.city].some((s) => s.toLowerCase().includes(q));
-      return matchesQ && matchesFilter(p, filter);
+      const matchesSport = sport === "all" || p.sport === sport;
+      return matchesQ && matchesSport && matchesFilter(p, filter);
     });
     if (sort === "price") list.sort((a, b) => a.pricePerHour - b.pricePerHour);
     if (sort === "distance") list.sort((a, b) => a.distanceKm - b.distanceKm);
     return list;
-  }, [pitches, query, filter, sort]);
+  }, [pitches, query, sport, filter, sort]);
+
+  /** "12 pitches", "8 courts", or a neutral count when both are in view. */
+  const countLabel = useMemo(() => {
+    const n = filtered.length;
+    if (ar) return `${n} ${sport === "padel" ? "ملعب بادل" : "ملعب"}`;
+    if (sport === "padel") return `${n} ${n === 1 ? "court" : "courts"}`;
+    if (sport === "football") return `${n} ${n === 1 ? "pitch" : "pitches"}`;
+    return `${n} ${n === 1 ? "venue" : "venues"}`;
+  }, [filtered.length, sport, ar]);
 
   // A marker tap highlights the card and brings it into view.
   const handleMapSelect = (id: string) => {
@@ -134,22 +176,35 @@ export default function DiscoverPage() {
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-black tracking-tight">{ar ? "اكتشف" : "Discover"}</h1>
           <span className="text-sm font-semibold text-muted">
-            {loading
-              ? ar
-                ? "جار التحميل..."
-                : "Loading..."
-              : `${filtered.length} ${ar ? "ملعب" : filtered.length === 1 ? "pitch" : "pitches"}`}
+            {loading ? (ar ? "جار التحميل..." : "Loading...") : countLabel}
           </span>
         </div>
-        <div className="mt-4 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+        <div className="mt-4 flex w-fit items-center gap-1 rounded-full bg-surface-2 p-1">
+          {SPORTS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setSport(s.id)}
+              aria-pressed={sport === s.id}
+              className={`rounded-full px-4 py-1.5 text-[13.5px] font-bold transition ${
+                sport === s.id
+                  ? "bg-white text-electric shadow-sm"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              {ar ? s.ar : s.en}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3 flex flex-col gap-2.5 sm:flex-row sm:items-center">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={ar ? "ابحث عن ملعب أو منطقة" : "Search a pitch or area"}
+            placeholder={ar ? "ابحث عن ملعب أو منطقة" : "Search a venue or area"}
             className="w-full rounded-full border border-border bg-surface px-4 py-2.5 text-sm outline-none placeholder:text-muted focus:border-electric/50 focus:ring-4 focus:ring-electric/10 sm:max-w-xs"
           />
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scroll-thin sm:pb-0">
-            {FILTERS.map((f) => (
+            {chips.map((f) => (
               <button
                 key={f.id}
                 className="chip"
@@ -193,7 +248,7 @@ export default function DiscoverPage() {
             </div>
           ) : filtered.length === 0 ? (
             <p className="py-10 text-center text-sm text-muted">
-              {ar ? "لا توجد ملاعب مطابقة." : "No pitches match."}
+              {ar ? "لا توجد ملاعب مطابقة." : "Nothing matches."}
             </p>
           ) : (
             <ul className="space-y-3 pb-1">
