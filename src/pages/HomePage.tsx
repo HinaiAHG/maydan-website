@@ -167,16 +167,16 @@ export default function HomePage() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 6L9 17l-5-5" /></svg>
               </span>
               <div className="text-start">
-                <p className="text-[13px] font-black text-ink">{ar ? "تم تأكيد الحجز" : "Booking confirmed"}</p>
+                <p className="text-[13px] font-semibold text-ink">{ar ? "تم تأكيد الحجز" : "Booking confirmed"}</p>
                 <p className="text-[11.5px] text-muted">{ar ? "الخميس 6 مساءً" : "Thu, 6:00 PM"} · OMR 12.0</p>
               </div>
             </div>
           </div>
           <div className="absolute end-[28%] top-[64%] hidden -rotate-2 lg:block" style={{ transform: px(-0.3) }}>
             <div className="card flex items-center gap-3 px-4 py-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-electric text-white text-[12px] font-black">5v5</span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-electric text-white text-[12px] font-semibold">5v5</span>
               <div className="text-start">
-                <p className="text-[13px] font-black text-ink">{ar ? "رمز الانضمام" : "Join code"}</p>
+                <p className="text-[13px] font-semibold text-ink">{ar ? "رمز الانضمام" : "Join code"}</p>
                 <p className="font-mono text-[13px] font-bold tracking-[0.2em] text-electric">A7K2MD</p>
               </div>
             </div>
@@ -185,10 +185,10 @@ export default function HomePage() {
 
         <div className="relative mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-electric/25 bg-electric/8 px-4 py-1.5 text-[13px] font-bold text-electric">
+            <span className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3.5 py-1.5 text-[13px] font-medium text-muted">
               <span aria-hidden>🇴🇲</span> {ar ? T.heroPill.ar : T.heroPill.en}
             </span>
-            <h1 className="mt-6 text-[44px] font-black leading-[1.04] tracking-tight text-ink sm:text-[64px]">
+            <h1 className="display mt-6 text-[46px] font-semibold text-ink sm:text-[64px]">
               {ar ? T.heroTitle1.ar : T.heroTitle1.en}
               <span className="block text-electric">{ar ? T.heroTitle2.ar : T.heroTitle2.en}</span>
             </h1>
@@ -196,15 +196,15 @@ export default function HomePage() {
               {ar ? T.heroSub.ar : T.heroSub.en}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/discover" className="btn btn-primary !px-7 !py-3.5 !text-[16px]">
+              <Link to="/discover" className="btn btn-primary !px-6 !py-3 !text-[15px]">
                 {ar ? T.ctaDiscover.ar : T.ctaDiscover.en}
               </Link>
-              <Link to="/ai" className="btn btn-ghost !px-7 !py-3.5 !text-[16px]">
+              <Link to="/ai" className="btn btn-ghost !px-6 !py-3 !text-[15px]">
                 {ar ? T.ctaAI.ar : T.ctaAI.en}
               </Link>
             </div>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <span className="text-[13.5px] font-bold uppercase tracking-[0.12em] text-muted">
+              <span className="text-[14px] text-muted">
                 {ar ? T.getApp.ar : T.getApp.en}
               </span>
               <AppStoreBadge />
@@ -226,11 +226,11 @@ export default function HomePage() {
           >
             {/* Copy */}
             <div className="w-full lg:w-1/2">
-              <span className="inline-flex items-center gap-2 text-[13.5px] font-black uppercase tracking-[0.14em] text-electric">
+              <span className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-electric">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
                 {ar ? f.k.ar : f.k.en}
               </span>
-              <h2 className="mt-3 text-[30px] font-black leading-tight tracking-tight text-ink sm:text-[38px]">
+              <h2 className="display mt-3 text-[30px] font-semibold text-ink sm:text-[38px]">
                 {ar ? f.title.ar : f.title.en}
               </h2>
               <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-muted">{ar ? f.body.ar : f.body.en}</p>
@@ -253,10 +253,10 @@ export default function HomePage() {
         <div className="mx-auto max-w-[1200px] px-4 pb-20 sm:px-6">
           <div className="relative overflow-hidden rounded-[28px] bg-electric px-6 py-14 text-center sm:py-16" style={{ background: "linear-gradient(135deg, #3b76f6, #1d4ed8)" }}>
             <img src="/assets/img/logo_white.svg" alt="" aria-hidden className="pointer-events-none absolute -end-10 -top-10 w-64 opacity-10" />
-            <h2 className="text-[32px] font-black tracking-tight text-white sm:text-[40px]">{ar ? T.bottomTitle.ar : T.bottomTitle.en}</h2>
+            <h2 className="display text-[32px] font-semibold text-white sm:text-[40px]">{ar ? T.bottomTitle.ar : T.bottomTitle.en}</h2>
             <p className="mx-auto mt-3 max-w-md text-[16px] text-white/85">{ar ? T.bottomBody.ar : T.bottomBody.en}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link to="/discover" className="btn !bg-white !px-8 !py-3.5 !text-[16px] !text-electric hover:!bg-white/90">
+              <Link to="/discover" className="btn !bg-white !px-6 !py-3 !text-[15px] !text-electric hover:!bg-white/90">
                 {ar ? T.ctaDiscover.ar : T.ctaDiscover.en}
               </Link>
               <AppStoreBadge tone="light" />
@@ -314,7 +314,7 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
           ].map((m) => (
             <span
               key={m.p + m.top}
-              className={`absolute rounded-full px-3 py-1 text-[12px] font-black shadow-md ${
+              className={`absolute rounded-full px-3 py-1 text-[12px] font-semibold shadow-md ${
                 m.active ? "bg-electric text-white" : "border border-electric/30 bg-white text-electric"
               }`}
               style={{ top: m.top, insetInlineStart: m.start }}
@@ -330,7 +330,7 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
     const slots = ["4:00", "5:00", "6:00", "7:00", "8:00", "9:00"];
     return (
       <Frame>
-        <p className="mb-3 text-[13px] font-black uppercase tracking-wider text-muted">{ar ? "اليوم" : "Today"}</p>
+        <p className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-muted">{ar ? "اليوم" : "Today"}</p>
         <div className="grid grid-cols-3 gap-2.5">
           {slots.map((s, i) => (
             <span
@@ -349,7 +349,7 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
         </div>
         <div className="mt-4 flex items-center justify-between rounded-xl bg-bg-soft px-4 py-3">
           <span className="text-[14px] font-bold text-ink">{ar ? "ملعب 6 لاعبين" : "6-a-side court"}</span>
-          <span className="text-[14px] font-black text-electric">OMR 12.0</span>
+          <span className="text-[14px] font-semibold text-electric">OMR 12.0</span>
         </div>
       </Frame>
     );
@@ -358,17 +358,17 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
     return (
       <Frame>
         <div className="flex flex-col items-center py-4">
-          <p className="text-[13px] font-black uppercase tracking-wider text-muted">{ar ? "رمز الانضمام" : "Join code"}</p>
+          <p className="text-[13px] font-semibold uppercase tracking-wider text-muted">{ar ? "رمز الانضمام" : "Join code"}</p>
           <div className="mt-4 flex gap-2" dir="ltr">
             {"A7K2MD".split("").map((c, i) => (
-              <span key={i} className="flex h-12 w-10 items-center justify-center rounded-xl border border-electric/30 bg-white text-[20px] font-black text-electric shadow-sm">
+              <span key={i} className="flex h-12 w-10 items-center justify-center rounded-xl border border-electric/30 bg-white text-[20px] font-semibold text-electric shadow-sm">
                 {c}
               </span>
             ))}
           </div>
           <div className="mt-6 flex -space-x-2" dir="ltr">
             {["bg-electric", "bg-electric/80", "bg-electric/60", "bg-electric/40"].map((b, i) => (
-              <span key={i} className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-white ${b} text-[12px] font-black text-white`}>
+              <span key={i} className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-white ${b} text-[12px] font-semibold text-white`}>
                 {["A", "S", "M", "+2"][i]}
               </span>
             ))}
@@ -383,8 +383,8 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
     return (
       <Frame>
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-[13px] font-black uppercase tracking-wider text-muted">{ar ? "هذا الأسبوع" : "This week"}</p>
-          <span className="rounded-full bg-electric/10 px-3 py-1 text-[12.5px] font-black text-electric">OMR 486.0</span>
+          <p className="text-[13px] font-semibold uppercase tracking-wider text-muted">{ar ? "هذا الأسبوع" : "This week"}</p>
+          <span className="rounded-full bg-electric/10 px-3 py-1 text-[12.5px] font-semibold text-electric">OMR 486.0</span>
         </div>
         <div className="flex h-40 items-end gap-2.5" dir="ltr">
           {bars.map((h, i) => (
@@ -394,11 +394,11 @@ function FeatureVisual({ kind, ar }: { kind: Feature["visual"]; ar: boolean }) {
         <div className="mt-4 grid grid-cols-2 gap-2.5">
           <div className="rounded-xl bg-bg-soft px-4 py-3">
             <p className="text-[12px] font-bold text-muted">{ar ? "حجوزات اليوم" : "Bookings today"}</p>
-            <p className="text-[20px] font-black text-ink">9</p>
+            <p className="text-[20px] font-semibold text-ink">9</p>
           </div>
           <div className="rounded-xl bg-bg-soft px-4 py-3">
             <p className="text-[12px] font-bold text-muted">{ar ? "نسبة الإشغال" : "Occupancy"}</p>
-            <p className="text-[20px] font-black text-ink">72%</p>
+            <p className="text-[20px] font-semibold text-ink">72%</p>
           </div>
         </div>
       </Frame>

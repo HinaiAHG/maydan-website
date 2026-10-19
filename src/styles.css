@@ -7,15 +7,23 @@
 @font-face { font-family: "Winco"; src: url("/assets/fonts/winco-black.otf") format("opentype"); font-weight: 800; font-display: swap; }
 @font-face { font-family: "Winco"; src: url("/assets/fonts/winco-ultra-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
 
-/* ---- Brand theme: light, airy, electric-blue-forward ---- */
+/*
+ * Theme.
+ *
+ * Near-monochrome on purpose. Colour is information here: the blue means
+ * "this does something", so the moment it is also the header, the chips and
+ * the shadows, it stops meaning anything. Greys carry the structure, type
+ * carries the hierarchy, and the blue is spent only on what you can act on.
+ */
 @theme {
-  --color-bg: #f6f8fd;
-  --color-bg-soft: #eef2fa;
+  --color-bg: #ffffff;
+  --color-bg-soft: #f5f5f7;
   --color-surface: #ffffff;
-  --color-surface-2: #f1f5fc;
-  --color-ink: #0d1b32;
-  --color-muted: #5c6b84;
-  --color-border: rgba(13, 27, 50, 0.09);
+  --color-surface-2: #f5f5f7;
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
+  /* A hairline, not a border. Barely there at 1px and gone at a glance. */
+  --color-border: rgba(0, 0, 0, 0.08);
   --color-electric: #2563eb;
   --color-electric-bright: #1d4ed8;
 
@@ -27,102 +35,127 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background:
-    radial-gradient(900px 420px at 85% -120px, rgba(37, 99, 235, 0.10), transparent 65%),
-    radial-gradient(700px 380px at -10% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
-    var(--color-bg);
-  background-attachment: fixed;
+  /* Flat. The old radial blue washes made every screen look like a product
+     page for itself. */
+  background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  line-height: 1.55;
+  line-height: 1.47;
+  letter-spacing: -0.012em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-html[dir="rtl"] body { font-family: var(--font-ar); }
+html[dir="rtl"] body { font-family: var(--font-ar); letter-spacing: 0; }
 
-/* Smooth, consistent transitions across interactive elements. */
-a, button, .card, .pitch-row, .chip, .navlink {
-  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease,
-    transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+/* Headings tighten as they grow, the way optical sizing works on a real
+   typeface: at display sizes the default spacing reads as gappy. */
+h1, h2, h3 { letter-spacing: -0.021em; }
+.display { letter-spacing: -0.028em; line-height: 1.07; }
+
+a, button, .card, .pitch-row, .chip, .navlink, .seg-item {
+  transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease,
+    box-shadow 0.22s ease, opacity 0.22s ease;
 }
 
-/* Cards: white, rounded, soft blue-tinted elevation */
+/* ---- Cards ----
+   No coloured glow and no lift on hover. A card that jumps when the pointer
+   passes over it is a card that cannot be scanned past. */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(13, 27, 50, 0.04), 0 10px 30px rgba(37, 99, 235, 0.05);
+  border-radius: 18px;
 }
 .card-hover:hover {
-  transform: translateY(-3px);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 4px 10px rgba(13, 27, 50, 0.05), 0 22px 48px rgba(37, 99, 235, 0.14);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 28px rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
-/* Buttons: pill-shaped, electric-first */
+/* ---- Buttons ----
+   Compact, flat, one weight down from shouting. The old gradient and its two
+   stacked blue glows were doing the work that size and placement should. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  border: none; cursor: pointer; font-family: inherit; font-weight: 700;
-  border-radius: 999px; padding: 12px 22px; font-size: 15px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: none; cursor: pointer; font-family: inherit;
+  font-weight: 500; letter-spacing: -0.01em;
+  border-radius: 980px; padding: 9px 19px; font-size: 14.5px;
 }
-.btn-primary {
-  background: linear-gradient(180deg, #3b76f6, var(--color-electric));
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35), 0 10px 24px rgba(37, 99, 235, 0.22);
-}
-.btn-primary:hover {
-  background: linear-gradient(180deg, #2f6af0, var(--color-electric-bright));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.40), 0 16px 32px rgba(37, 99, 235, 0.26);
-}
-.btn-ghost { background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-border); }
-.btn-ghost:hover { background: var(--color-surface-2); border-color: rgba(37, 99, 235, 0.30); }
+.btn-primary { background: var(--color-electric); color: #fff; }
+.btn-primary:hover { background: var(--color-electric-bright); }
+.btn-ghost { background: var(--color-surface-2); color: var(--color-ink); }
+.btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
 
-/* Chips */
+/* ---- Filter chips ----
+   Unselected chips are not outlined boxes, they are quiet text that gains a
+   ground on hover. Selected is a solid ink fill: unmistakable without adding
+   another colour to the screen. */
 .chip {
-  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600;
-  border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-muted);
-  cursor: pointer; white-space: nowrap;
+  border-radius: 980px; padding: 6px 14px; font-size: 13px; font-weight: 500;
+  border: 1px solid transparent; background: transparent; color: var(--color-muted);
+  cursor: pointer; white-space: nowrap; letter-spacing: -0.008em;
 }
-.chip:hover { color: var(--color-ink); border-color: rgba(37, 99, 235, 0.30); }
-.chip[data-active="true"] {
-  background: rgba(37, 99, 235, 0.10);
-  border-color: rgba(37, 99, 235, 0.45);
-  color: var(--color-electric);
+.chip:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.chip[data-active="true"] { background: var(--color-ink); color: #fff; }
+.chip[data-active="true"]:hover { background: #000; color: #fff; }
+
+/* ---- Segmented control ----
+   For a choice between a few peers, where chips would imply they stack. The
+   selected item is a raised white tile on a sunken grey track. */
+.segmented {
+  display: inline-flex; align-items: center; gap: 2px;
+  background: rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 2px;
+}
+.seg-item {
+  border: none; cursor: pointer; font-family: inherit;
+  border-radius: 8px; padding: 6px 15px; font-size: 13.5px; font-weight: 500;
+  letter-spacing: -0.008em; color: var(--color-muted); background: transparent;
+  white-space: nowrap;
+}
+.seg-item:hover { color: var(--color-ink); }
+.seg-item[aria-pressed="true"] {
+  background: #fff; color: var(--color-ink); font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
 }
 
-/* Sticky top header: frosted white over the page */
+/* ---- Header ----
+   Translucent white over whatever scrolls under it, closed by a hairline.
+   The saturation bump is what keeps colour alive through the blur. */
 .glass-top {
-  background: rgba(255, 255, 255, 0.82);
-  -webkit-backdrop-filter: saturate(1.4) blur(14px);
-  backdrop-filter: saturate(1.4) blur(14px);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Thin scrollbars for the list panes */
-.scroll-thin { scrollbar-width: thin; scrollbar-color: rgba(13, 27, 50, 0.22) transparent; }
-.scroll-thin::-webkit-scrollbar { width: 8px; }
-.scroll-thin::-webkit-scrollbar-thumb { background: rgba(13, 27, 50, 0.18); border-radius: 8px; }
+/* Header links: quiet by default, full strength when current. Nothing is
+   boxed; the weight and the opacity carry the state. */
+.navlink {
+  color: var(--color-ink); opacity: 0.72;
+  font-size: 13.5px; font-weight: 500; letter-spacing: -0.008em;
+}
+.navlink:hover { opacity: 1; }
+.navlink[data-current="true"] { opacity: 1; font-weight: 600; }
 
-/* Fade-in for content as it loads */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.fade-up { animation: fadeUp 0.35s ease both; }
+.scroll-thin { scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.18) transparent; }
+.scroll-thin::-webkit-scrollbar { width: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.16); border-radius: 8px; }
+
+/* Content settles in rather than sliding up from a distance. */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp 0.3s ease both; }
 
 /* ---- Legal / long-form content ---- */
-.legal-prose { color: var(--color-muted); font-size: 15.5px; }
-.legal-prose h2 { color: var(--color-ink); font-size: 20px; font-weight: 800; margin: 30px 0 10px; }
+.legal-prose { color: var(--color-muted); font-size: 16px; line-height: 1.6; }
+.legal-prose h2 { color: var(--color-ink); font-size: 21px; font-weight: 600; margin: 32px 0 10px; letter-spacing: -0.021em; }
 .legal-prose h2:first-child { margin-top: 0; }
-.legal-prose h3 { color: var(--color-ink); font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
-.legal-prose p { margin: 10px 0; }
-.legal-prose ul { margin: 10px 0; padding-inline-start: 22px; list-style: disc; }
+.legal-prose h3 { color: var(--color-ink); font-size: 17px; font-weight: 600; margin: 22px 0 8px; letter-spacing: -0.016em; }
+.legal-prose p { margin: 11px 0; }
+.legal-prose ul { margin: 11px 0; padding-inline-start: 22px; list-style: disc; }
 .legal-prose li { margin: 6px 0; }
-.legal-prose a { color: var(--color-electric); font-weight: 600; }
-.legal-prose a:hover { color: var(--color-electric-bright); }
-.legal-prose strong { color: var(--color-ink); font-weight: 700; }
+.legal-prose a { color: var(--color-electric); font-weight: 500; }
+.legal-prose a:hover { text-decoration: underline; }
+.legal-prose strong { color: var(--color-ink); font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .card-hover:hover { transform: none; }
-  .btn-primary:hover { transform: none; }
   .fade-up { animation: none; }
 }

@@ -174,22 +174,18 @@ export default function DiscoverPage() {
       {/* Toolbar: title, count, search and filter chips. */}
       <header className="shrink-0">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-2xl font-black tracking-tight">{ar ? "اكتشف" : "Discover"}</h1>
-          <span className="text-sm font-semibold text-muted">
+          <h1 className="display text-[30px] font-semibold">{ar ? "اكتشف" : "Discover"}</h1>
+          <span className="text-[13.5px] text-muted">
             {loading ? (ar ? "جار التحميل..." : "Loading...") : countLabel}
           </span>
         </div>
-        <div className="mt-4 flex w-fit items-center gap-1 rounded-full bg-surface-2 p-1">
+        <div className="segmented mt-5">
           {SPORTS.map((s) => (
             <button
               key={s.id}
+              className="seg-item"
               onClick={() => setSport(s.id)}
               aria-pressed={sport === s.id}
-              className={`rounded-full px-4 py-1.5 text-[13.5px] font-bold transition ${
-                sport === s.id
-                  ? "bg-white text-electric shadow-sm"
-                  : "text-muted hover:text-ink"
-              }`}
             >
               {ar ? s.ar : s.en}
             </button>
@@ -201,7 +197,7 @@ export default function DiscoverPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={ar ? "ابحث عن ملعب أو منطقة" : "Search a venue or area"}
-            className="w-full rounded-full border border-border bg-surface px-4 py-2.5 text-sm outline-none placeholder:text-muted focus:border-electric/50 focus:ring-4 focus:ring-electric/10 sm:max-w-xs"
+            className="w-full rounded-[10px] bg-surface-2 px-3.5 py-2 text-[13.5px] outline-none placeholder:text-muted focus:bg-white focus:ring-2 focus:ring-black/10 sm:max-w-[260px]"
           />
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scroll-thin sm:pb-0">
             {chips.map((f) => (
@@ -214,7 +210,7 @@ export default function DiscoverPage() {
                 {ar ? f.ar : f.en}
               </button>
             ))}
-            <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
+            <span className="mx-1 h-4 w-px shrink-0 bg-black/10" aria-hidden />
             {SORTS.map((s) => (
               <button
                 key={s.id}

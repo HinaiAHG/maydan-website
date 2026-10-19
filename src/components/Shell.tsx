@@ -30,68 +30,68 @@ export function Shell() {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden">
-      <header
-        className="z-20 shadow-[0_2px_24px_rgba(29,78,216,0.28)]"
-        style={{ background: "linear-gradient(180deg, #2f6af0, #1d4ed8)" }}
-      >
-        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-3 px-4 sm:px-6">
-          <Link to="/" className="flex shrink-0 items-center" aria-label="Maydan home">
-            <img src="/assets/img/wordmark_white.svg" alt="Maydan" className="hidden h-11 w-auto sm:block" />
-            <img src="/assets/img/logo_white.svg" alt="Maydan" className="h-9 w-9 sm:hidden" />
+      {/*
+        A translucent white bar closed by a hairline, not a saturated slab.
+        The old header painted the brand colour across the full width, which
+        made every page look like an advert for itself and left the blue with
+        nothing to say when it appeared on something you could actually press.
+      */}
+      <header className="glass-top z-20">
+        <div className="mx-auto flex h-12 max-w-[1400px] items-center gap-6 px-4 sm:px-6">
+          {/* The square mark plus the name, rather than the lockup wordmark.
+              That wordmark is 4:1, so at any height a 48px header can carry,
+              its M is about 13 pixels wide and collapses into two bars and a
+              dot. The mark reads at 22px because it is drawn square. */}
+          <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Maydan home">
+            <img src="/assets/img/logo_electric_blue.svg" alt="" className="h-[22px] w-[22px]" />
+            <span className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Maydan</span>
           </Link>
 
-          {/* Primary nav: pills on desktop, icon row on mobile */}
-          <nav className="mx-auto flex items-center gap-1 overflow-x-auto rounded-full sm:gap-1.5">
+          {/* Plain links. Current is carried by weight and opacity, so nothing
+              needs a box drawn around it. */}
+          <nav className="mx-auto flex items-center gap-1 overflow-x-auto sm:gap-2">
             {ITEMS.map((it) => (
               <NavLink
                 key={it.to}
                 to={it.to}
                 end={it.end}
-                className={({ isActive }) =>
-                  `navlink flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-[14.5px] font-bold sm:px-4 ${
-                    isActive
-                      ? "bg-white text-electric shadow-sm"
-                      : "text-white/85 hover:bg-white/15 hover:text-white"
-                  }`
-                }
+                className="whitespace-nowrap rounded-lg px-2.5 py-1.5 sm:px-3"
               >
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d={ICONS[it.icon]} />
-                </svg>
-                <span className="hidden lg:inline">{ar ? it.ar : it.en}</span>
+                {({ isActive }) => (
+                  <span data-current={isActive} className="navlink flex items-center gap-1.5">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d={ICONS[it.icon]} />
+                    </svg>
+                    <span className="hidden lg:inline">{ar ? it.ar : it.en}</span>
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
-            {/* The landing page has the full badge; every other page gets this
-                so the app is never more than one click away. Hidden on narrow
-                screens, where the header has no room to spare. */}
+          <div className="flex shrink-0 items-center gap-3">
             <a
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="navlink hidden items-center gap-1.5 rounded-full border border-white/35 px-3 py-1.5 text-[13px] font-bold text-white hover:bg-white/15 xl:inline-flex"
+              className="navlink hidden items-center gap-1.5 lg:inline-flex"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                 <path d="M16.37 12.78c.02-2.3 1.88-3.4 1.96-3.45-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.79-.41 6.92 1.15 9.18.76 1.11 1.67 2.35 2.86 2.3 1.15-.04 1.58-.74 2.97-.74 1.39 0 1.78.74 2.99.72 1.24-.02 2.02-1.12 2.78-2.24.88-1.28 1.24-2.52 1.26-2.59-.03-.01-2.41-.93-2.44-3.69zM14.1 5.95c.63-.77 1.06-1.83.94-2.9-.91.04-2.01.61-2.67 1.37-.59.67-1.1 1.76-.96 2.79 1.01.08 2.05-.52 2.69-1.26z" />
               </svg>
               {ar ? "حمّل التطبيق" : "Get the app"}
             </a>
-            <button
-              onClick={toggle}
-              className="navlink rounded-full border border-white/35 px-3 py-1.5 text-[13px] font-bold text-white hover:bg-white/15"
-              aria-label="Toggle language"
-            >
+
+            <button onClick={toggle} className="navlink" aria-label="Toggle language">
               {ar ? "EN" : "ع"}
             </button>
 
@@ -99,17 +99,14 @@ export function Shell() {
               <Link
                 to="/profile"
                 aria-label={ar ? "الملف" : "Profile"}
-                className={`navlink flex h-9 w-9 items-center justify-center rounded-full bg-white text-[14px] font-black text-electric ${
-                  onProfile ? "ring-2 ring-white ring-offset-2 ring-offset-electric-bright" : ""
+                className={`flex h-7 w-7 items-center justify-center rounded-full bg-electric text-[12px] font-semibold text-white ${
+                  onProfile ? "ring-2 ring-electric/25" : ""
                 }`}
               >
                 {(user.displayName?.[0] ?? user.phoneNumber?.slice(-2) ?? "M").toUpperCase()}
               </Link>
             ) : (
-              <Link
-                to="/signin"
-                className="btn !bg-white !px-4 !py-2 !text-[13.5px] !text-electric hover:!bg-white/90"
-              >
+              <Link to="/signin" className="btn btn-primary !px-4 !py-1.5 !text-[13.5px]">
                 {ar ? "تسجيل الدخول" : "Sign in"}
               </Link>
             )}

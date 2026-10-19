@@ -38,7 +38,7 @@ function accentColor(hex: number): string {
 /** Small translucent pill used on the banner (surface, size, indoor). */
 function Tag({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full bg-black/35 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+    <span className="rounded-full bg-black/30 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
       {children}
     </span>
   );
@@ -93,7 +93,7 @@ export function PitchCard({
         {/* The sport names itself top-left: with two sports in one list, which
             one you are looking at is the first thing to answer. */}
         <div className="absolute top-2.5 start-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
             <SportIcon sport={pitch.sport} size={12} />
             {padel ? (ar ? "بادل" : "Padel") : ar ? "كرة القدم" : "Football"}
           </span>
@@ -104,7 +104,7 @@ export function PitchCard({
           {pitch.isIndoor && <Tag>{ar ? "مغلق" : "Indoor"}</Tag>}
         </div>
         <div className="absolute bottom-2.5 end-3 text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-          <span className="text-[15px] font-extrabold">{rate(pitch.pricePerHour, ar)}</span>
+          <span className="text-[14px] font-semibold">{rate(pitch.pricePerHour, ar)}</span>
           {hasRate(pitch.pricePerHour) && (
             <span className="ms-1 text-[11px] font-semibold opacity-90">{ar ? "/ ساعة" : "/ hr"}</span>
           )}
@@ -113,14 +113,14 @@ export function PitchCard({
 
       <div className="p-4">
         <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 truncate text-[15px] font-bold">
+          <span className="min-w-0 truncate text-[15px] font-semibold tracking-[-0.012em]">
             {pitch.name}
             {pro && (
-              <span className="ms-1.5 text-[12px] font-extrabold italic text-electric-bright">Pro</span>
+              <span className="ms-1.5 text-[12px] font-semibold text-muted">Pro</span>
             )}
           </span>
           {pitch.rating > 0 && (
-            <span className="shrink-0 text-[12px] font-semibold text-muted">
+            <span className="shrink-0 text-[12px] text-muted">
               <span className="text-amber-500">★</span> {pitch.rating.toFixed(1)}
               {pitch.reviewCount > 0 ? ` (${pitch.reviewCount})` : ""}
             </span>
@@ -131,8 +131,8 @@ export function PitchCard({
         </div>
         <div className="mt-2 flex items-center gap-2">
           <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${
-              pro ? "bg-electric/15 text-electric-bright" : "bg-surface-2 text-muted"
+            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${
+              pro ? "bg-electric/10 text-electric" : "bg-surface-2 text-muted"
             }`}
           >
             {pro ? (ar ? "قابل للحجز" : "Bookable") : ar ? "اتصل للحجز" : "Call to book"}
