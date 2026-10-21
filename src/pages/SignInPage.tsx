@@ -11,6 +11,7 @@ import { auth, firebaseReady } from "../lib/firebase";
 import { useAuth } from "../lib/auth";
 import { useLang } from "../lib/i18n";
 import { SetupNotice } from "../components/SetupNotice";
+import { Wordmark } from "../components/Wordmark";
 
 const CODE_LENGTH = 6;
 
@@ -198,7 +199,7 @@ export default function SignInPage() {
   return (
     <div className="mx-auto grid min-h-full w-full max-w-[1400px] place-items-center px-4 py-10 sm:px-6">
       <div className="card fade-up w-full max-w-md p-8 sm:p-10">
-        <img src="/assets/img/wordmark_electric_blue.svg" alt="Maydan" className="mx-auto mb-2 h-8 w-auto" />
+        <Wordmark className="mx-auto mb-2 justify-center text-[26px] font-extrabold text-electric" />
         <p className="mb-7 text-center text-sm text-muted">
           {ar ? "سجل الدخول للحجز ومتابعة مبارياتك." : "Sign in to book pitches and follow your matches."}
         </p>

@@ -1,6 +1,7 @@
 import type { Pitch } from "../../lib/types";
 import { useLang } from "../../lib/i18n";
 import { accentColor, amenityLabel, tierLabel } from "./helpers";
+import { Wordmark } from "../Wordmark";
 
 /** Accent-colored hero block: watermark, tier badge, name, location, chips. */
 export function PitchHero({ pitch }: { pitch: Pitch }) {
@@ -15,11 +16,7 @@ export function PitchHero({ pitch }: { pitch: Pitch }) {
       {pitch.imageURL ? (
         <img src={pitch.imageURL} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
-        <img
-          src="/assets/img/wordmark_white.svg"
-          alt=""
-          className="pointer-events-none absolute -bottom-4 -end-8 w-80 opacity-10"
-        />
+        <Wordmark className="text-[18px] font-extrabold text-white drop-shadow-sm" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
 

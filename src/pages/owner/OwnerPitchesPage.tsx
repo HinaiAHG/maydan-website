@@ -4,6 +4,7 @@ import { useLang } from "../../lib/i18n";
 import { omr } from "../../lib/data";
 import { savePitch, useOwnedPitches } from "../../lib/owner";
 import type { Court, Pitch } from "../../lib/types";
+import { MaydanMark } from "../../components/Wordmark";
 
 type SaveState = { state: "saving" | "saved" | "error"; message?: string };
 
@@ -128,7 +129,7 @@ export default function OwnerPitchesPage() {
                 className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-b from-black/0 to-black/15 ring-1 ring-ink/10 ring-inset"
                 style={{ backgroundColor: accentCss(pitch.accentHex) }}
               >
-                <img src="/assets/img/logo_white.svg" alt="" className="h-5 w-5 drop-shadow-sm" />
+                <MaydanMark className="h-5 w-5 text-white drop-shadow-sm" />
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="truncate text-base font-bold">{pitch.name}</h2>

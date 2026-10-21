@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../../lib/i18n";
+import { Wordmark } from "../../components/Wordmark";
 
 export default function SupportPage() {
   const { ar } = useLang();
@@ -17,7 +18,7 @@ export default function SupportPage() {
       <header className="glass-top sticky top-0 z-20 px-4 py-4 sm:px-6">
         <div className="mx-auto flex max-w-3xl items-center justify-between">
           <Link to="/" aria-label="Maydan home">
-            <img src="/assets/img/wordmark_electric_blue.svg" alt="Maydan" className="h-6 w-auto" />
+            <Wordmark className="text-[20px] font-extrabold text-electric" />
           </Link>
           <Link to="/" className="text-[14px] font-semibold text-electric hover:text-electric-bright">
             {ar ? "العودة للرئيسية" : "Back to home"}

@@ -5,6 +5,7 @@ import type { Pitch } from "../lib/types";
 import { useLang } from "../lib/i18n";
 import { streamReply, type ChatTurn } from "../lib/openai";
 import { SetupNotice } from "../components/SetupNotice";
+import { MaydanMark } from "../components/Wordmark";
 
 // NOTE: Maydan AI currently calls OpenAI straight from the browser with
 // VITE_OPENAI_KEY (dev only). The key must move behind a server proxy
@@ -211,7 +212,7 @@ export default function ChatPage() {
       <header className="border-b border-border">
         <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-5 py-4 lg:px-8">
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[1.5px] border-electric bg-surface">
-            <img src="/assets/img/logo_electric_blue.svg" alt="" className="h-[18px] w-[18px]" />
+            <MaydanMark className="h-[18px] w-[18px] text-electric" />
           </div>
           <div className="min-w-0">
             <h1 className="text-lg font-black leading-tight tracking-tight">{t.title}</h1>
