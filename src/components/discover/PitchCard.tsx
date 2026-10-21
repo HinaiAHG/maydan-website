@@ -1,48 +1,16 @@
-import type { ReactNode } from "react";
-import { hasRate, rate } from "../../lib/data";
 import { SportIcon } from "../SportIcon";
+import { courtNoun } from "../pitch/helpers";
 import { useLang } from "../../lib/i18n";
 import type { Pitch } from "../../lib/types";
 
-/** Raw Firestore size values to the app's short labels. */
-const SIZE_LABELS: Record<string, { en: string; ar: string }> = {
-  fiveASide: { en: "5v5", ar: "5v5" },
-  sixASide: { en: "6v6", ar: "6v6" },
-  sevenASide: { en: "7v7", ar: "7v7" },
-  elevenASide: { en: "11v11", ar: "11v11" },
-  padelSingles: { en: "Singles", ar: "فردي" },
-  padelDoubles: { en: "Doubles", ar: "زوجي" },
-};
 
-const SURFACE_LABELS: Record<string, { en: string; ar: string }> = {
-  grass: { en: "Grass", ar: "عشب طبيعي" },
-  turf: { en: "Turf", ar: "عشب صناعي" },
-  hybrid: { en: "Hybrid", ar: "هجين" },
-};
 
-const AMENITY_LABELS: Record<string, { en: string; ar: string }> = {
-  parking: { en: "Parking", ar: "مواقف" },
-  showers: { en: "Showers", ar: "دشات" },
-  lighting: { en: "Floodlights", ar: "إضاءة" },
-  lockers: { en: "Lockers", ar: "خزائن" },
-  cafe: { en: "Cafe", ar: "مقهى" },
-  water: { en: "Water", ar: "ماء" },
-  indoor: { en: "Indoor", ar: "مغلق" },
-};
 
 /** The app stores accent colors as a number (0xRRGGBB). */
 function accentColor(hex: number): string {
   return `#${(hex & 0xffffff).toString(16).padStart(6, "0")}`;
 }
 
-/** Small translucent pill used on the banner (surface, size, indoor). */
-function Tag({ children }: { children: ReactNode }) {
-  return (
-    <span className="rounded-full bg-black/30 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
-      {children}
-    </span>
-  );
-}
 
 export function PitchCard({
   pitch,
@@ -58,87 +26,76 @@ export function PitchCard({
   const { ar } = useLang();
   const pro = pitch.tier === "pro";
   const padel = pitch.sport === "padel";
-  // A padel court has no grass or turf to speak of, so the surface tag is
-  // dropped rather than left to show whatever happened to be imported.
-  const surface = padel ? undefined : SURFACE_LABELS[pitch.surface];
-  const size = SIZE_LABELS[pitch.size];
-  const amenities = pitch.amenities.map((a) => {
-    const label = AMENITY_LABELS[a];
-    return label ? (ar ? label.ar : label.en) : a;
-  });
+
+  const courts = pitch.courts.length;
+  const subtitle = [
+    [pitch.area, pitch.city].filter(Boolean).join(", "),
+    courts > 0 ? `${courts} ${courtNoun(pitch.sport, ar, courts !== 1)}` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
-      className={`card w-full overflow-hidden text-start ${
-        selected ? "ring-2 ring-electric" : "card-hover"
+      className={`photo-card block w-full text-start ${
+        selected ? "ring-2 ring-electric ring-offset-2" : "card-hover"
       }`}
     >
-      {/* Accent banner: brand watermark, photo when present, tags and price. */}
-      <div className="relative h-32" style={{ backgroundColor: accentColor(pitch.accentHex) }}>
-        {pitch.imageURL && (
+      {/* The card is the photograph, as it is in the app: the name, the place
+          and the rating sit on it over a scrim, with no white block beneath
+          explaining the picture. */}
+      <div className="relative aspect-[16/10] w-full">
+        {pitch.imageURL ? (
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${pitch.imageURL})` }}
           />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: accentColor(pitch.accentHex) }}
+          >
+            <img
+              src="/assets/img/watermark_white.svg"
+              alt=""
+              className="pointer-events-none absolute -top-4 -end-6 h-32 w-32 opacity-20"
+            />
+          </div>
         )}
-        <img
-          src="/assets/img/watermark_white.svg"
-          alt=""
-          className="pointer-events-none absolute -top-3 -end-5 h-24 w-24 opacity-15"
-        />
-        <div className="absolute inset-0 bg-linear-to-b from-black/5 via-transparent to-black/55" />
-        {/* The sport names itself top-left: with two sports in one list, which
-            one you are looking at is the first thing to answer. */}
-        <div className="absolute top-2.5 start-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
-            <SportIcon sport={pitch.sport} size={12} />
+        <div className="scrim" />
+
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
+          <span className="photo-pill">
+            <SportIcon sport={pitch.sport} size={13} />
             {padel ? (ar ? "بادل" : "Padel") : ar ? "كرة القدم" : "Football"}
           </span>
+          <span className="photo-pill">
+            {pro ? (ar ? "قابل للحجز" : "Book now") : ar ? "اتصل للحجز" : "Call to book"}
+          </span>
         </div>
-        <div className="absolute bottom-2.5 start-3 flex items-center gap-1.5">
-          {surface && <Tag>{ar ? surface.ar : surface.en}</Tag>}
-          {size && <Tag>{ar ? size.ar : size.en}</Tag>}
-          {pitch.isIndoor && <Tag>{ar ? "مغلق" : "Indoor"}</Tag>}
-        </div>
-        <div className="absolute bottom-2.5 end-3 text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-          <span className="text-[14px] font-semibold">{rate(pitch.pricePerHour, ar)}</span>
-          {hasRate(pitch.pricePerHour) && (
-            <span className="ms-1 text-[11px] font-semibold opacity-90">{ar ? "/ ساعة" : "/ hr"}</span>
-          )}
-        </div>
-      </div>
 
-      <div className="p-4">
-        <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 truncate text-[15px] font-semibold tracking-[-0.012em]">
-            {pitch.name}
-            {pro && (
-              <span className="ms-1.5 text-[12px] font-semibold text-muted">Pro</span>
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+          <div className="min-w-0">
+            <h3 className="truncate text-[22px] font-extrabold tracking-[-0.02em] text-white">
+              {pitch.name}
+            </h3>
+            {subtitle && (
+              <p className="mt-0.5 truncate text-[14px] font-medium text-white/85">{subtitle}</p>
             )}
-          </span>
+          </div>
           {pitch.rating > 0 && (
-            <span className="shrink-0 text-[12px] text-muted">
-              <span className="text-amber-500">★</span> {pitch.rating.toFixed(1)}
-              {pitch.reviewCount > 0 ? ` (${pitch.reviewCount})` : ""}
+            <span className="flex shrink-0 items-center gap-1.5 pb-1 text-white">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.3 6.2 20.4l1.1-6.5L2.6 9.3l6.5-.9z" />
+              </svg>
+              <span className="text-[15px] font-extrabold">{pitch.rating.toFixed(1)}</span>
+              {pitch.reviewCount > 0 && (
+                <span className="text-[13px] font-medium text-white/70">({pitch.reviewCount})</span>
+              )}
             </span>
-          )}
-        </div>
-        <div className="mt-0.5 truncate text-[13px] text-muted">
-          {[pitch.area, pitch.city].filter(Boolean).join(" · ")}
-        </div>
-        <div className="mt-2 flex items-center gap-2">
-          <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${
-              pro ? "bg-electric/10 text-electric" : "bg-surface-2 text-muted"
-            }`}
-          >
-            {pro ? (ar ? "قابل للحجز" : "Bookable") : ar ? "اتصل للحجز" : "Call to book"}
-          </span>
-          {amenities.length > 0 && (
-            <span className="min-w-0 truncate text-[12px] text-muted">{amenities.join(" · ")}</span>
           )}
         </div>
       </div>

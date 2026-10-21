@@ -2,6 +2,7 @@ import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
 import { useLang } from "../lib/i18n";
 import { useAuth } from "../lib/auth";
 import { APP_STORE_URL } from "./AppStoreBadge";
+import { Wordmark } from "./Wordmark";
 
 const ICONS = {
   // simple line icons (24x24 paths)
@@ -36,36 +37,36 @@ export function Shell() {
         made every page look like an advert for itself and left the blue with
         nothing to say when it appeared on something you could actually press.
       */}
+      {/*
+        The app's header is not a bar: it is the wordmark with controls grouped
+        into white capsules floating on the page. Carried over so the two
+        products read as one.
+      */}
       <header className="glass-top z-20">
-        <div className="mx-auto flex h-12 max-w-[1400px] items-center gap-6 px-4 sm:px-6">
-          {/* The square mark plus the name, rather than the lockup wordmark.
-              That wordmark is 4:1, so at any height a 48px header can carry,
-              its M is about 13 pixels wide and collapses into two bars and a
-              dot. The mark reads at 22px because it is drawn square. */}
-          <Link to="/" className="flex shrink-0 items-center gap-2" aria-label="Maydan home">
-            <img src="/assets/img/logo_electric_blue.svg" alt="" className="h-[22px] w-[22px]" />
-            <span className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Maydan</span>
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-4 px-4 sm:px-6">
+          <Link
+            to="/"
+            className="flex shrink-0 items-center text-[22px] font-extrabold text-electric"
+            aria-label="Maydan home"
+          >
+            <Wordmark />
           </Link>
 
-          {/* Plain links. Current is carried by weight and opacity, so nothing
-              needs a box drawn around it. */}
-          <nav className="mx-auto flex items-center gap-1 overflow-x-auto sm:gap-2">
+          <nav className="header-pill mx-auto flex overflow-x-auto">
             {ITEMS.map((it) => (
-              <NavLink
-                key={it.to}
-                to={it.to}
-                end={it.end}
-                className="whitespace-nowrap rounded-lg px-2.5 py-1.5 sm:px-3"
-              >
+              <NavLink key={it.to} to={it.to} end={it.end}>
                 {({ isActive }) => (
-                  <span data-current={isActive} className="navlink flex items-center gap-1.5">
+                  <span
+                    data-current={isActive}
+                    className="navlink flex items-center gap-2 whitespace-nowrap"
+                  >
                     <svg
-                      width="16"
-                      height="16"
+                      width="18"
+                      height="18"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="1.7"
+                      strokeWidth="1.9"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
@@ -78,17 +79,18 @@ export function Shell() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="header-pill flex shrink-0">
             <a
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="navlink hidden items-center gap-1.5 lg:inline-flex"
+              title={ar ? "حمّل التطبيق" : "Get the app"}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                 <path d="M16.37 12.78c.02-2.3 1.88-3.4 1.96-3.45-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.79-.41 6.92 1.15 9.18.76 1.11 1.67 2.35 2.86 2.3 1.15-.04 1.58-.74 2.97-.74 1.39 0 1.78.74 2.99.72 1.24-.02 2.02-1.12 2.78-2.24.88-1.28 1.24-2.52 1.26-2.59-.03-.01-2.41-.93-2.44-3.69zM14.1 5.95c.63-.77 1.06-1.83.94-2.9-.91.04-2.01.61-2.67 1.37-.59.67-1.1 1.76-.96 2.79 1.01.08 2.05-.52 2.69-1.26z" />
               </svg>
-              {ar ? "حمّل التطبيق" : "Get the app"}
+              {ar ? "التطبيق" : "App"}
             </a>
 
             <button onClick={toggle} className="navlink" aria-label="Toggle language">
@@ -99,15 +101,15 @@ export function Shell() {
               <Link
                 to="/profile"
                 aria-label={ar ? "الملف" : "Profile"}
-                className={`flex h-7 w-7 items-center justify-center rounded-full bg-electric text-[12px] font-semibold text-white ${
-                  onProfile ? "ring-2 ring-electric/25" : ""
+                className={`flex h-9 w-9 items-center justify-center rounded-full text-[14px] font-extrabold ${
+                  onProfile ? "bg-electric text-white" : "bg-surface-2 text-ink"
                 }`}
               >
                 {(user.displayName?.[0] ?? user.phoneNumber?.slice(-2) ?? "M").toUpperCase()}
               </Link>
             ) : (
-              <Link to="/signin" className="btn btn-primary !px-4 !py-1.5 !text-[13.5px]">
-                {ar ? "تسجيل الدخول" : "Sign in"}
+              <Link to="/signin" className="navlink" data-current="true">
+                {ar ? "دخول" : "Sign in"}
               </Link>
             )}
           </div>

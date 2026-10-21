@@ -8,24 +8,28 @@
 @font-face { font-family: "Winco"; src: url("/assets/fonts/winco-ultra-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
 
 /*
- * Theme.
+ * Theme, ported from the iOS app's Brand tokens (Sources/DesignSystem/Theme.swift)
+ * so the two read as one product rather than two takes on a brand.
  *
- * Near-monochrome on purpose. Colour is information here: the blue means
- * "this does something", so the moment it is also the header, the chips and
- * the shadows, it stops meaning anything. Greys carry the structure, type
- * carries the hierarchy, and the blue is spent only on what you can act on.
+ * The app's palette follows the 60/30/10 rule from the identity guide: black
+ * and white dominate, greys support, electric blue is the accent spent on
+ * actions. Its radii are 10/16/24 and its grouped surfaces are #F5F5F5.
  */
 @theme {
   --color-bg: #ffffff;
-  --color-bg-soft: #f5f5f7;
+  --color-bg-soft: #f5f5f5;
   --color-surface: #ffffff;
-  --color-surface-2: #f5f5f7;
-  --color-ink: #1d1d1f;
-  --color-muted: #6e6e73;
-  /* A hairline, not a border. Barely there at 1px and gone at a glance. */
-  --color-border: rgba(0, 0, 0, 0.08);
+  --color-surface-2: #f5f5f5;
+  --color-ink: #000000;
+  --color-muted: #1f2937;
+  --color-faint: #6b7280;
+  --color-border: #e5e7eb;
   --color-electric: #2563eb;
   --color-electric-bright: #1d4ed8;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 
   --font-sans: "Winco", "Cairo", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-ar: "Cairo", "Winco", sans-serif;
@@ -35,127 +39,152 @@
 html { scroll-behavior: smooth; }
 
 body {
-  /* Flat. The old radial blue washes made every screen look like a product
-     page for itself. */
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  line-height: 1.47;
-  letter-spacing: -0.012em;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-html[dir="rtl"] body { font-family: var(--font-ar); letter-spacing: 0; }
+html[dir="rtl"] body { font-family: var(--font-ar); }
 
-/* Headings tighten as they grow, the way optical sizing works on a real
-   typeface: at display sizes the default spacing reads as gappy. */
-h1, h2, h3 { letter-spacing: -0.021em; }
-.display { letter-spacing: -0.028em; line-height: 1.07; }
+/* The app leans on Winco's heavy weights for anything that names something.
+   Restraint here reads as a different product, not a quieter one. */
+h1, h2, h3, .display { font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
 
-a, button, .card, .pitch-row, .chip, .navlink, .seg-item {
-  transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease,
-    box-shadow 0.22s ease, opacity 0.22s ease;
+a, button, .card, .chip, .navlink, .seg-item, .row {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 /* ---- Cards ----
-   No coloured glow and no lift on hover. A card that jumps when the pointer
-   passes over it is a card that cannot be scanned past. */
+   The app's venue card is the photo. Name, place and rating sit on it over a
+   scrim; there is no white block underneath explaining the picture. */
 .card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
 }
-.card-hover:hover {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 28px rgba(0, 0, 0, 0.07);
-  border-color: rgba(0, 0, 0, 0.12);
+.card-bordered { border: 1px solid var(--color-border); }
+.photo-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface-2);
+}
+.photo-card .scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0) 32%,
+              rgba(0,0,0,0.10) 55%, rgba(0,0,0,0.72) 100%);
+}
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+
+/* A pill that sits on top of a photograph, as the app's sport and status
+   tags do: dark enough to hold white text over any image. */
+.photo-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 980px; padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: #fff; font-size: 13px; font-weight: 700;
 }
 
 /* ---- Buttons ----
-   Compact, flat, one weight down from shouting. The old gradient and its two
-   stacked blue glows were doing the work that size and placement should. */
+   Rounded rectangles at the app's medium radius, not capsules. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  border: none; cursor: pointer; font-family: inherit;
-  font-weight: 500; letter-spacing: -0.01em;
-  border-radius: 980px; padding: 9px 19px; font-size: 14.5px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; cursor: pointer; font-family: inherit; font-weight: 700;
+  border-radius: var(--radius-md); padding: 13px 22px; font-size: 16px;
+  letter-spacing: -0.01em;
 }
 .btn-primary { background: var(--color-electric); color: #fff; }
 .btn-primary:hover { background: var(--color-electric-bright); }
 .btn-ghost { background: var(--color-surface-2); color: var(--color-ink); }
-.btn-ghost:hover { background: rgba(0, 0, 0, 0.09); }
+.btn-ghost:hover { background: #ebebeb; }
+.btn-dark { background: #1f2937; color: #fff; }
+.btn-dark:hover { background: #111827; }
 
 /* ---- Filter chips ----
-   Unselected chips are not outlined boxes, they are quiet text that gains a
-   ground on hover. Selected is a solid ink fill: unmistakable without adding
-   another colour to the screen. */
+   The app's are white capsules with real presence, and the selected one is
+   outlined and lettered in blue rather than filled. */
 .chip {
-  border-radius: 980px; padding: 6px 14px; font-size: 13px; font-weight: 500;
-  border: 1px solid transparent; background: transparent; color: var(--color-muted);
-  cursor: pointer; white-space: nowrap; letter-spacing: -0.008em;
+  border-radius: 980px; padding: 10px 18px; font-size: 15px; font-weight: 700;
+  border: 1.5px solid transparent; background: var(--color-surface-2);
+  color: var(--color-ink); cursor: pointer; white-space: nowrap;
+  letter-spacing: -0.01em;
 }
-.chip:hover { background: var(--color-surface-2); color: var(--color-ink); }
-.chip[data-active="true"] { background: var(--color-ink); color: #fff; }
-.chip[data-active="true"]:hover { background: #000; color: #fff; }
+.chip:hover { background: #ededed; }
+.chip[data-active="true"] {
+  background: #fff; border-color: var(--color-electric); color: var(--color-electric);
+}
 
-/* ---- Segmented control ----
-   For a choice between a few peers, where chips would imply they stack. The
-   selected item is a raised white tile on a sunken grey track. */
+/* ---- Segmented control ---- */
 .segmented {
-  display: inline-flex; align-items: center; gap: 2px;
-  background: rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 2px;
+  display: inline-flex; align-items: center; gap: 3px;
+  background: var(--color-surface-2); border-radius: 980px; padding: 3px;
 }
 .seg-item {
   border: none; cursor: pointer; font-family: inherit;
-  border-radius: 8px; padding: 6px 15px; font-size: 13.5px; font-weight: 500;
-  letter-spacing: -0.008em; color: var(--color-muted); background: transparent;
+  border-radius: 980px; padding: 8px 18px; font-size: 15px; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--color-muted); background: transparent;
   white-space: nowrap;
 }
 .seg-item:hover { color: var(--color-ink); }
 .seg-item[aria-pressed="true"] {
-  background: #fff; color: var(--color-ink); font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  background: #fff; color: var(--color-electric);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* ---- Header ----
-   Translucent white over whatever scrolls under it, closed by a hairline.
-   The saturation bump is what keeps colour alive through the blur. */
+/* ---- Grouped list ----
+   The app's "Pitches & prices" block: one grey container, hairline dividers,
+   no border around the whole thing. */
+.group-list { background: var(--color-surface-2); border-radius: var(--radius-md); overflow: hidden; }
+.group-list > * + * { border-top: 1px solid var(--color-border); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; }
+
+/* ---- Header ---- */
 .glass-top {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.86);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid var(--color-border);
 }
-
-/* Header links: quiet by default, full strength when current. Nothing is
-   boxed; the weight and the opacity carry the state. */
+/* The app groups its header controls into white capsules that float on the
+   background rather than sitting in a bar. */
+.header-pill {
+  /* Laid out by the markup, not here: declaring `display` in this class would
+     outrank Tailwind's `hidden`, so nothing carrying it could ever be hidden. */
+  align-items: center; gap: 2px;
+  background: #fff; border-radius: 980px; padding: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(0, 0, 0, 0.05);
+}
 .navlink {
-  color: var(--color-ink); opacity: 0.72;
-  font-size: 13.5px; font-weight: 500; letter-spacing: -0.008em;
+  color: var(--color-muted); font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+  border-radius: 980px; padding: 8px 14px;
 }
-.navlink:hover { opacity: 1; }
-.navlink[data-current="true"] { opacity: 1; font-weight: 600; }
+.navlink:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.navlink[data-current="true"] { background: var(--color-electric); color: #fff; }
+.navlink[data-current="true"]:hover { background: var(--color-electric-bright); color: #fff; }
 
 .scroll-thin { scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.18) transparent; }
 .scroll-thin::-webkit-scrollbar { width: 8px; }
 .scroll-thin::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.16); border-radius: 8px; }
 
-/* Content settles in rather than sliding up from a distance. */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.fade-up { animation: fadeUp 0.3s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp 0.32s ease both; }
 
 /* ---- Legal / long-form content ---- */
 .legal-prose { color: var(--color-muted); font-size: 16px; line-height: 1.6; }
-.legal-prose h2 { color: var(--color-ink); font-size: 21px; font-weight: 600; margin: 32px 0 10px; letter-spacing: -0.021em; }
+.legal-prose h2 { color: var(--color-ink); font-size: 22px; font-weight: 800; margin: 32px 0 10px; letter-spacing: -0.02em; }
 .legal-prose h2:first-child { margin-top: 0; }
-.legal-prose h3 { color: var(--color-ink); font-size: 17px; font-weight: 600; margin: 22px 0 8px; letter-spacing: -0.016em; }
+.legal-prose h3 { color: var(--color-ink); font-size: 17px; font-weight: 700; margin: 22px 0 8px; letter-spacing: -0.016em; }
 .legal-prose p { margin: 11px 0; }
 .legal-prose ul { margin: 11px 0; padding-inline-start: 22px; list-style: disc; }
 .legal-prose li { margin: 6px 0; }
-.legal-prose a { color: var(--color-electric); font-weight: 500; }
+.legal-prose a { color: var(--color-electric); font-weight: 700; }
 .legal-prose a:hover { text-decoration: underline; }
-.legal-prose strong { color: var(--color-ink); font-weight: 600; }
+.legal-prose strong { color: var(--color-ink); font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .card-hover:hover { transform: none; }
   .fade-up { animation: none; }
 }
