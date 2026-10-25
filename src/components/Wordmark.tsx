@@ -1,26 +1,25 @@
 /*
  * The Maydan mark and lockup.
  *
- * Composed here rather than used from logo_*.svg / wordmark_*.svg, for three
- * reasons. Those files set "aydan" in Arial, so the brand name rendered in a
- * typeface the brand does not use. The wordmark's canvas is 800 wide with the
- * artwork ending near 400, so at any height a header can carry, the M came out
- * about 13px across and collapsed into two bars and a dot. And the mark was
- * drawn far lighter than the Winco weights it sits beside: its stems measured
- * 14% of its height where the type's are near 22%, and its own diagonals were
- * thinner again, only 42% of its stems.
+ * The path below is the brand mark exactly as public/assets/img/logo_electric_blue.svg
+ * draws it: stems at ±160, apex at -20, dot at (0, 120) r38. It is not redrawn
+ * here and should not be. An earlier version of this file emboldened it to
+ * match the weight of the type beside it, which was the wrong way round: the
+ * mark is the fixed thing and the type is what should move.
  *
- * The path below keeps the outer silhouette of the original exactly (stems at
- * ±160, apex at -20), which is the part you recognise, and moves only the
- * inner edges. That is how a letterform is emboldened. The diagonals are set
- * at 82% of the stems rather than equal to them, because a diagonal of the
- * same measure reads heavier than a vertical.
+ * It is still composed in React rather than used straight from the SVG files,
+ * for two reasons that have nothing to do with weight. Those files set "aydan"
+ * in Arial, so the brand name rendered in a typeface the brand does not use.
+ * And the wordmark's canvas is 800 wide with the artwork ending near 400, so at
+ * any height a header can carry, the M came out about 13px across and collapsed
+ * into two bars and a dot.
  */
 
-/** Stems at 22% of the mark's height, to sit with Winco's heavy weights. */
-const MARK_PATH = "M-160-180V180H-82V-12L0 70L82 -12V180H160V-180L0-20Z";
-const DOT_CY = 130;
-const DOT_R = 40;
+/** The mark as drawn in the brand asset. Do not re-weight it. */
+const MARK_PATH =
+  "M-160-180L-160 180L-110 180L-110-100L0-10L110-100L110 180L160 180L160-180L0-20Z";
+const DOT_CY = 120;
+const DOT_R = 38;
 const VIEW_BOX = "-160 -180 320 360";
 
 /** The M on its own, for places with no room for the full name. */
@@ -55,9 +54,18 @@ export function Wordmark({ className = "" }: { className?: string }) {
         <path d={MARK_PATH} />
         <circle cx="0" cy={DOT_CY} r={DOT_R} />
       </svg>
-      {/* A touch of air after the mark: the M's right leg is a flat stem, so
-          set solid against the a it reads as one jammed letterform. */}
-      <span className="ms-[0.08em] tracking-[-0.01em]">aydan</span>
+      {/*
+        The letters set their own weight rather than inheriting it. The mark's
+        stems are 14% of its height; Winco's heavy weights are near 22%, so an
+        extrabold "aydan" next to it reads as two different logos jammed
+        together. Every caller passes font-extrabold for the surrounding
+        context, and the lockup has to be immune to that. Regular is the weight
+        that sits level with the mark.
+
+        A touch of air after the mark too: the M's right leg is a flat stem, so
+        set solid against the a it reads as one jammed letterform.
+      */}
+      <span className="ms-[0.08em] font-normal tracking-[-0.005em]">aydan</span>
       <span className="sr-only">Maydan</span>
     </span>
   );
